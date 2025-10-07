@@ -46,6 +46,8 @@ def processed_image(path, out_jpegs_dir, out_webps_dir):
             if background.mode != "RGB":
                 background = background.convert('RGB')
 
+            final_width, final_height = background.size
+
             # Создание путей для сохранения измененного файла
 
             base = os.path.splitext(os.path.basename(path))[0]
@@ -54,7 +56,7 @@ def processed_image(path, out_jpegs_dir, out_webps_dir):
 
             # Сохранение измененного файла
 
-            if width < 65535 or height < 65535:
+            if final_width < 65535 and final_height < 65535:
                 try:
                     background.save(out_jpeg, format='JPEG')
                     print(f"Сохранение JPEG -> {out_jpeg}")
@@ -64,7 +66,7 @@ def processed_image(path, out_jpegs_dir, out_webps_dir):
                 print('Слишком большой размер файла для jpeg')
                 return
 
-            if width < 16383 or height < 16383:
+            if final_width < 16383 and final_height < 16383:
                 try:
                     background.save(out_webp, format='WEBP')
                     print(f"Сохранение WEBP -> {out_webp}")
@@ -105,24 +107,29 @@ if __name__ == '__main__':
     os.makedirs(out_webps, exist_ok=True)
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-f', type=str, required=True,
-                        help="Выберите формат работы: file - с файлом, papka - с папкой и укажите путь к файлу")
-    parser.add_argument('path')
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument('--file', type=str, nargs=1, help="Путь к одному файлу для обработки.")
+    group.add_argument('--dir', type=str, help="Путь к папке для обработки.")
+
     args = parser.parse_args()
-    f = args.f
-    if f == 'file':
-        images_dir = args.path
+
+    if args.file:
+        f = args.file
+        print(f)
+        images_dir = f[0]
 
         if images_dir == '':
             print('Файл отсутствует')
 
         processed_image(images_dir, out_jpegs, out_webps)
 
-    elif f == 'papka':
-        images_dir = args.path
+    elif args.dir:
+        images_dir = args.dir
 
         if images_dir == '':
             print('Файл отсутствует')
+
+        print(images_dir)
 
         files = [os.path.join(images_dir, f) for f in os.listdir(images_dir)]
 

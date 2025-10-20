@@ -1,7 +1,6 @@
 # Необходимые библиотеки
 
 import argparse
-from tkinter import filedialog
 from PIL import Image, UnidentifiedImageError, ImageFilter
 import os
 
@@ -36,9 +35,6 @@ def processed_image(path, out_jpegs_dir, out_webps_dir):
                 new_w = MAX_WIDTH
                 new_h = int(height * (new_w / width))
                 img = img.resize((new_w, new_h), Image.LANCZOS)
-
-                background = Image.new('RGB', img.size, (255, 255, 255))
-                background.paste(img, mask=img)
 
             background = Image.new('RGB', img.size, (255, 255, 255))
             background.paste(img, mask=img)
@@ -108,15 +104,13 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument('--file', type=str, nargs=1, help="Путь к одному файлу для обработки.")
+    group.add_argument('--file', type=str, help="Путь к одному файлу для обработки.")
     group.add_argument('--dir', type=str, help="Путь к папке для обработки.")
 
     args = parser.parse_args()
 
     if args.file:
-        f = args.file
-        print(f)
-        images_dir = f[0]
+        images_dir = args.file
 
         if images_dir == '':
             print('Файл отсутствует')
@@ -128,8 +122,6 @@ if __name__ == '__main__':
 
         if images_dir == '':
             print('Файл отсутствует')
-
-        print(images_dir)
 
         files = [os.path.join(images_dir, f) for f in os.listdir(images_dir)]
 

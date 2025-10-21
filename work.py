@@ -1,7 +1,7 @@
 # Необходимые библиотеки
 
 import argparse
-from PIL import Image, UnidentifiedImageError, ImageFilter
+from PIL import Image, UnidentifiedImageError
 import os
 
 # Максимальная ширина и неизменные данные
@@ -130,3 +130,4 @@ if __name__ == '__main__':
 
         for file in files:
             processed_image(file, out_jpegs, out_webps)
+
